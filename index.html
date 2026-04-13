@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>云白 | Project Profile</title>
+    <style>
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-main: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.65);
+            --accent: #7dd3fc;
+            --font-main: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-main);
+            background: url('https://v2.api.yunbai.icu/api/acg/api.php') no-repeat center center fixed;
+            background-size: cover;
+            height: 100dvh; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--text-main);
+            overscroll-behavior: none;
+        }
+
+        /* 噪点纹理 - 增加高级感 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.1;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            z-index: 0;
+        }
+
+        .glass-container {
+            /* 原代码 z-index 为 10，我们保持不动 */
+            position: relative;
+            z-index: 10; 
+            width: 90%;
+            max-width: 440px;
+            height: 85dvh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px) saturate(160%);
+            -webkit-backdrop-filter: blur(25px) saturate(160%);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .header {
+            padding: 40px 30px 20px;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin: 0;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--accent);
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .scroll-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 30px 40px;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch; 
+            mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+        }
+
+        .scroll-content::-webkit-scrollbar { display: none; }
+
+        section { margin-top: 30px; }
+
+        h2 {
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        h2::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            margin-left: 12px;
+        }
+
+        .about-p {
+            line-height: 1.8;
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        .about-p p { margin-bottom: 18px; }
+
+        .highlight { color: var(--accent); font-weight: 500; }
+
+        .list-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-main);
+            padding: 18px 22px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            transition: 0.3s;
+        }
+
+        .list-item:active {
+            transform: scale(0.96);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .footer {
+            padding: 20px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            flex-shrink: 0;
+            font-style: italic;
+        }
+
+        /* =========================================
+           特效层级修正 CSS (关键部分)
+           ========================================= */
+        
+        /* 修正樱花特效 (yinghua.js)
+           该脚本通常创建一个 id 为 'yinghua' 的 canvas */
+        #yinghua {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100dvw !important;
+            height: 100dvh !important;
+            z-index: 99999 !important; /* 赋予极高层级 */
+            pointer-events: none !important; /* 防止特效遮挡点击 */
+        }
+
+        /* 修正鼠标星星特效 (xiaoxingxing.js)
+           该脚本将星星放入 .js-cursor-container 中 */
+        .js-cursor-container {
+            position: fixed !important;
+            z-index: 100000 !important; /* 比樱花更高，因为是鼠标跟随 */
+            pointer-events: none !important;
+        }
+
+        /* 如果爱心特效脚本 (aixin.js) 创建了独立的 canvas 或 div，
+           这里也需要捕获。因为不知道具体的 ID，通常这些特效
+           都会被设置为全屏、fixed 定位。 */
+        canvas {
+            /* 这是一条保险样式，如果特效是用 canvas 实现且没有 ID */
+            position: fixed;
+            z-index: 99998; 
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="glass-container">
+        <header class="header">
+            <h1>YUNBAI</h1>
+            <div class="tagline">From Interest to Practice</div>
+        </header>
+
+        <div class="scroll-content">
+            <section>
+                <h2>JOURNEY / 记事</h2>
+                <div class="about-p">
+                    <p>
+                        故事开始于 <span class="highlight">2024 年 8 月 20 日</span>。
+                    </p>
+                    <p>
+                        那天刷到的第一个建站视频，像是一把钥匙，打开了代码世界的大门。在技校的学习时光里，我没有那种按部就班的束缚，反而有更多的时间去钻研那些真正让我着迷的技术。
+                    </p>
+                    <p>
+                        从对着视频敲下第一行代码，到 <span class="highlight">2025 年 9 月</span> 亲手让云白（yunbai）云平台上线。我习惯在实操中寻找答案，在 Oracle 节点和 API 接口的博弈中，构筑出这片属于自己的天地。
+                    </p>
+                    <p>
+                        技术对我而言，是技能，更是热爱。感谢这一路上给予我启发和支持的每一位，感谢所有陪伴云白成长的你们。
+                    </p>
+                    <p style="text-align: center; opacity: 0.8; font-size: 0.85rem;">
+                        —— 特别鸣谢下列名单，致敬所有人。
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2>CREDITS / 鸣谢</h2>
+                <div class="list-group">
+                    <a href="https://qm.qq.com/q/y0o6LuKsy4" target="_blank" class="list-item">
+                        <span>主核Kernyr</span><span style="opacity:0.3">↗</span>
+                    </a>
+                    <a href="https://v2.api.yunbai.icu/api/acg/api.php" target="_blank" class="list-item">
+                        <span>森</span><span style="opacity:0.3">↗</span>
+                    </a>
+                    <a href="https://www.bt.cn" target="_blank" class="list-item">
+                        <span>宝塔面板 (bt.cn)</span><span style="opacity:0.3">↗</span>
+                    </a>
+                    <a href="https://www.google.com" target="_blank" class="list-item">
+                        <span>Google</span><span style="opacity:0.3">↗</span>
+                    </a>
+                    <a href="https://www.oracle.com" target="_blank" class="list-item">
+                        <span>Oracle</span><span style="opacity:0.3">↗</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            "Skills make the future." — Since 2024.08.20
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/aixin.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yinghua.js"></script>
+    <span class="js-cursor-container"></span>
+    <script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/xiaoxingxing.js"></script>
+</body>
+</html>
